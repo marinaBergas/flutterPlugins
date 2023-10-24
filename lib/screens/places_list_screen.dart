@@ -19,25 +19,33 @@ class PlaceListScreen extends StatelessWidget {
                 icon: const Icon(Icons.add))
           ],
         ),
-        body: Consumer<GreatPlaces>(
-          child: const Center(
-              child: Text('Got not places yes,starting adding some !')),
-          builder: (context, greatPlaces, ch) => Container(
-            child: greatPlaces.items.isEmpty
-                ? ch
-                : ListView.builder(
-                    itemCount: greatPlaces.items.length,
-                    itemBuilder: (context, i) => ListTile(
-                      leading: CircleAvatar(
-                        backgroundImage: FileImage(greatPlaces.items[i].image),
-                      ),
-                      title: Text(greatPlaces.items[i].title),
-                      onTap: () {
-//go to details
-                      },
-                    ),
+        body: FutureBuilder(
+          future: Provider.of<GreatPlaces>(context, listen: false)
+              .fetchAndSetPlaces(),
+          builder: (ctx, snapshot) => snapshot.connectionState ==
+                  ConnectionState.waiting
+              ? const Center(child: CircularProgressIndicator())
+              : Consumer<GreatPlaces>(
+                  child: const Center(
+                      child: Text('Got not places yes,starting adding some !')),
+                  builder: (context, greatPlaces, ch) => Container(
+                    child: greatPlaces.items.isEmpty
+                        ? ch
+                        : ListView.builder(
+                            itemCount: greatPlaces.items.length,
+                            itemBuilder: (context, i) => ListTile(
+                              leading: CircleAvatar(
+                                backgroundImage:
+                                    FileImage(greatPlaces.items[i].image),
+                              ),
+                              title: Text(greatPlaces.items[i].title),
+                              onTap: () {
+                                //go to details
+                              },
+                            ),
+                          ),
                   ),
-          ),
+                ),
         ));
   }
 }
